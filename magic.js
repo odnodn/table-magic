@@ -9,6 +9,7 @@ var example_csv='Feature, Description, Example\n'+
                 'Markdown formatting, "Adds spaces, makes things more legible",Markdown tab\n'+
                 'Form view, "Create tables with buttons!",Form tab\n'+
                 'Hasn\\\'t caught fire yet, So far, Huzzah!';
+
 $(window).load(function() {
 
   // Initial div
@@ -56,7 +57,7 @@ $(window).load(function() {
         $('textarea').val(md);
       }
 
-     });
+    });
 
 
 
@@ -85,7 +86,7 @@ function changeTab(newTab) {
       if (tab==="md") { array = md2array(input); }
       if (tab==="csv") { array = csv2array(input); }
       if (tab==="html") { array = html2array(input); }
-      if (tab==="form") { array = array = form2array(); }
+      if (tab==="form") { array = form2array(); }
       if (tab==="preview") { array = array_storge; }
 
       // Convert from array into new format, set other vars..
@@ -216,6 +217,8 @@ function csv2array(csv) {
 
   }
 
+  array = addEmptyCells(array);
+
   if (debug) { console.table(array); }
 
   return array;
@@ -316,6 +319,8 @@ function md2array(md) {
 
   if (debug) { console.table(array); }
 
+  array = addEmptyCells(array);
+
   return(array);
 
 }
@@ -370,7 +375,7 @@ function html2array(html) {
 
         // Validation error, try and fix.
         if (col_count>row.length) {
-          console.log('omgehghg');
+
           // Cells missing, add blanks
           var loopfor=(col_count-row.length);
           for (var l = 0; l < (col_count-row.length); l++) {
@@ -393,6 +398,8 @@ function html2array(html) {
   }
 
   if (debug) { console.table(array); }
+
+  array = addEmptyCells(array);
 
   return array;
 
@@ -509,6 +516,31 @@ function form2array() {
     // Save to array
     array[r]=currentrow;
 
+  }
+
+  array = addEmptyCells(array);
+
+  return array;
+
+}
+
+function addEmptyCells(array) {
+
+  // Length of longest row
+  var max = 0;
+
+  for (var r = 0; r < array.length; r++) {
+    if (array[r].length>max) max = array[r].length;
+  }
+
+  // Add blank cells for any that don't reach that length
+  for (var r = 0; r < array.length; r++) {
+    if (array[r].length<max) {
+      var loop = max-array[r].length;
+      for (var l = 0; l < loop; l++) {
+        array[r].push('');
+      }
+    }
   }
 
   return array;
